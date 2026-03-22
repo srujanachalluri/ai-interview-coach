@@ -1,11 +1,29 @@
+# Dependencies
 node_modules/
-.env
-.env.local
-dist/
-.DS_Store
+frontend/node_modules/
+
+# Python
+venv/
+backend/venv/
 __pycache__/
 *.pyc
-venv/
+*.pyo
 .venv/
-*.egg-info/
+
+# Build output
+dist/
+frontend/dist/
+build/
+
+# Environment files
+.env
+.env.local
+backend/.env
+frontend/.env
+
+# OS files
+.DS_Store
+Thumbs.db
+*.log
+
 AI_Interview_Coach_Deployment_Guide.docx
