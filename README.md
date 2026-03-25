@@ -303,7 +303,7 @@ If this project helped you land a job or learn something new, consider supportin
 **Srujana Challuri** — Software Engineer
 
 [![GitHub](https://img.shields.io/badge/GitHub-srujanachalluri-181717?style=flat-square&logo=github)](https://github.com/srujanachalluri)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-6366f1?style=flat-square)](https://your-portfolio-url.com)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-6366f1?style=flat-square)](https://master-portfolio-rho.vercel.app/)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=flat-square&logo=linkedin)](https://linkedin.com/in/srujanachalluri)
 
 </div>
