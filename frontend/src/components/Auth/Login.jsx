@@ -35,11 +35,11 @@ export default function Login() {
         }}>AI Interview Coach</h1>
 
         <p style={{ color: '#94a3b8', fontSize: '15px', marginBottom: '10px', fontWeight: '500' }}>
-          Practice interviews with AI — get instant feedback
+          Practice interviews with AI — speak or type your answers and get instant, honest feedback
         </p>
 
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '36px', flexWrap: 'wrap' }}>
-          {['🤖 AI Feedback', '📊 Scoring', '🏆 Progress', '6 Categories'].map(f => (
+          {['🎙 Voice answers', '🤖 AI Feedback', '🔥 Daily streaks', '📄 Resume-tailored', '📊 Progress'].map(f => (
             <span key={f} style={{
               background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)',
               borderRadius: '20px', padding: '4px 12px', fontSize: '12px',

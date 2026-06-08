@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 export default function Feedback({ evaluation, question, onNext, isLast }) {
+  const isMobile = useIsMobile();
   const [showModel, setShowModel] = useState(false);
   const { score, verdict, feedback, strengths, improvements, model_answer, keywords_mentioned, keywords_missed } = evaluation;
 
@@ -13,8 +15,9 @@ export default function Feedback({ evaluation, question, onNext, isLast }) {
       {/* Score header */}
       <div style={{
         background: verdictBg, border: `1px solid ${verdictBorder}`,
-        borderRadius: '16px', padding: '24px', marginBottom: '20px',
-        display: 'flex', alignItems: 'center', gap: '20px',
+        borderRadius: '16px', padding: isMobile ? '18px' : '24px', marginBottom: '20px',
+        display: 'flex', alignItems: 'center', gap: isMobile ? '14px' : '20px',
+        flexDirection: isMobile ? 'column' : 'row', textAlign: isMobile ? 'center' : 'left',
       }}>
         {/* Score circle */}
         <div style={{
@@ -39,7 +42,7 @@ export default function Feedback({ evaluation, question, onNext, isLast }) {
       </div>
 
       {/* Two column: strengths + improvements */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
         <div style={{
           background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)',
           borderRadius: '14px', padding: '18px',

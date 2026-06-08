@@ -32,6 +32,7 @@ class QuestionsRequest(BaseModel):
     category: str
     difficulty: str = "Medium"
     count: int = 10
+    context: str = ""
 
 
 class EvaluateRequest(BaseModel):
@@ -73,7 +74,8 @@ async def get_questions(req: QuestionsRequest):
             role=req.role,
             category=req.category,
             difficulty=req.difficulty,
-            count=req.count
+            count=req.count,
+            context=req.context
         )
         return {
             "success": True,

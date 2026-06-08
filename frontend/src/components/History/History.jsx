@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { collection, query, orderBy, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
+import { useIsMobile } from '../../hooks/useIsMobile';
 
 export default function History({ onLoad }) {
+  const isMobile = useIsMobile();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,8 +58,8 @@ export default function History({ onLoad }) {
             onClick={() => onLoad(session)}
             style={{
               background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '14px', padding: '16px 20px',
-              display: 'flex', alignItems: 'center', gap: '16px',
+              borderRadius: '14px', padding: isMobile ? '12px 14px' : '16px 20px',
+              display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '16px',
               cursor: 'pointer', transition: 'all 0.2s',
             }}
             onMouseOver={e => { e.currentTarget.style.borderColor = 'rgba(99,102,241,0.3)'; e.currentTarget.style.background = 'rgba(99,102,241,0.06)'; }}
@@ -81,10 +83,9 @@ export default function History({ onLoad }) {
                 <span>{session.categoryLabel}</span>
                 <span>•</span>
                 <span>{session.difficulty}</span>
+                {!isMobile && <><span>•</span><span>{session.totalQuestions} questions</span></>}
                 <span>•</span>
-                <span>{session.totalQuestions} questions</span>
-                <span>•</span>
-                <span>{session.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                <span>{session.createdAt?.toDate?.()?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', ...(isMobile ? {} : { year: 'numeric' }) })}</span>
               </p>
             </div>
 

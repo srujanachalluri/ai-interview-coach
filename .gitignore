@@ -26,4 +26,5 @@ frontend/.env
 Thumbs.db
 *.log
 
-AI_Interview_Coach_Deployment_Guide.docx
+AI_Interview_Coach_Deployment_Guide.docxbackend/venv/
+venv/
