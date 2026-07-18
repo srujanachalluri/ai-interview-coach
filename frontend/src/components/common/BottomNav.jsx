@@ -11,8 +11,8 @@ export default function BottomNav({ screen, onNavigate }) {
     <nav style={{
       position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 200,
       display: 'flex', justifyContent: 'space-around', alignItems: 'stretch',
-      background: 'rgba(10,10,22,0.92)', backdropFilter: 'blur(20px)',
-      borderTop: '1px solid rgba(255,255,255,0.07)',
+      background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(20px)',
+      borderTop: '1px solid #e6e9ef',
       paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       height: 'var(--bottom-nav-h)',
     }}>
@@ -25,7 +25,7 @@ export default function BottomNav({ screen, onNavigate }) {
             style={{
               flex: 1, background: 'none', border: 'none',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              gap: '3px', padding: '8px 0', color: active ? '#a5b4fc' : '#64748b',
+              gap: '3px', padding: '8px 0', color: active ? '#4f46e5' : '#64748b',
               transition: 'color 0.15s',
             }}
           >

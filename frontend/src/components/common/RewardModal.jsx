@@ -34,11 +34,11 @@ export default function RewardModal({ reward, onClose }) {
           {leveledUp ? '🚀' : newBadges.length ? '🏅' : '✨'}
         </div>
         <h2 style={{
-          fontSize: '1.5rem', fontWeight: 800, color: '#f1f5f9', marginBottom: '6px',
+          fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginBottom: '6px',
         }}>
           {leveledUp ? `Level ${newLevel}!` : 'Session Complete!'}
         </h2>
-        <p style={{ color: '#94a3b8', fontSize: '14px', marginBottom: '22px' }}>
+        <p style={{ color: '#475569', fontSize: '14px', marginBottom: '22px' }}>
           {leveledUp ? "You leveled up — keep the momentum going." : 'Nice work. Rewards added to your profile.'}
         </p>
 
@@ -48,14 +48,14 @@ export default function RewardModal({ reward, onClose }) {
             flex: 1, background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)',
             borderRadius: '16px', padding: '16px 12px',
           }}>
-            <p style={{ color: '#a5b4fc', fontSize: '26px', fontWeight: 800, lineHeight: 1 }}>+{gainedXp}</p>
+            <p style={{ color: '#4f46e5', fontSize: '26px', fontWeight: 800, lineHeight: 1 }}>+{gainedXp}</p>
             <p style={{ color: '#64748b', fontSize: '12px', fontWeight: 600, marginTop: '4px' }}>XP earned</p>
           </div>
           <div style={{
             flex: 1, background: 'rgba(251,146,60,0.12)', border: '1px solid rgba(251,146,60,0.25)',
             borderRadius: '16px', padding: '16px 12px',
           }}>
-            <p style={{ color: '#fb923c', fontSize: '26px', fontWeight: 800, lineHeight: 1 }}>
+            <p style={{ color: '#ea580c', fontSize: '26px', fontWeight: 800, lineHeight: 1 }}>
               <span className="flame">🔥</span> {streak}
             </p>
             <p style={{ color: '#64748b', fontSize: '12px', fontWeight: 600, marginTop: '4px' }}>
@@ -76,11 +76,11 @@ export default function RewardModal({ reward, onClose }) {
                 if (!b) return null;
                 return (
                   <div key={id} className="pop-in" style={{
-                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)',
+                    background: '#f8fafc', border: '1px solid #dfe3ea',
                     borderRadius: '14px', padding: '12px 14px', minWidth: '92px',
                   }}>
                     <div style={{ fontSize: '28px', marginBottom: '4px' }}>{b.icon}</div>
-                    <p style={{ color: '#f1f5f9', fontSize: '12px', fontWeight: 700 }}>{b.name}</p>
+                    <p style={{ color: '#0f172a', fontSize: '12px', fontWeight: 700 }}>{b.name}</p>
                   </div>
                 );
               })}

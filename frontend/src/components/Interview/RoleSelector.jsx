@@ -46,7 +46,7 @@ export default function RoleSelector({ onStart }) {
   };
 
   const labelStyle = {
-    display: 'block', color: '#94a3b8', fontSize: '12px', fontWeight: '700',
+    display: 'block', color: '#475569', fontSize: '12px', fontWeight: '700',
     textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px',
   };
 
@@ -55,7 +55,7 @@ export default function RoleSelector({ onStart }) {
       <div style={{ textAlign: 'center', marginBottom: isMobile ? '24px' : '36px' }}>
         <h2 style={{
           fontSize: isMobile ? '1.5rem' : '1.8rem', fontWeight: '800', letterSpacing: '-0.4px',
-          background: 'linear-gradient(135deg, #f1f5f9, #a5b4fc)',
+          background: 'linear-gradient(135deg, #0f172a, #4f46e5)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           marginBottom: '8px',
         }}>Choose your interview track</h2>
@@ -78,8 +78,8 @@ export default function RoleSelector({ onStart }) {
               onClick={() => setSelected(r)}
               className="hover-lift"
               style={{
-                background: active ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.03)',
-                border: `1px solid ${active ? 'rgba(99,102,241,0.5)' : 'rgba(255,255,255,0.08)'}`,
+                background: active ? 'rgba(99,102,241,0.15)' : '#ffffff',
+                border: `1px solid ${active ? 'rgba(99,102,241,0.5)' : '#e2e6ec'}`,
                 borderRadius: '18px', padding: isMobile ? '20px' : '24px 20px',
                 textAlign: isMobile ? 'left' : 'center', transition: 'all 0.2s',
                 display: 'flex', flexDirection: isMobile ? 'row' : 'column',
@@ -89,11 +89,11 @@ export default function RoleSelector({ onStart }) {
             >
               <div style={{ fontSize: isMobile ? '32px' : '40px', lineHeight: 1 }}>{r.category.icon}</div>
               <div>
-                <p style={{ color: '#f1f5f9', fontWeight: '800', fontSize: isMobile ? '15px' : '16px', marginBottom: '4px', letterSpacing: '-0.2px' }}>
+                <p style={{ color: '#0f172a', fontWeight: '800', fontSize: isMobile ? '15px' : '16px', marginBottom: '4px', letterSpacing: '-0.2px' }}>
                   {r.role.replace(' (New Grad)', '')}
                 </p>
-                <p style={{ color: active ? '#a5b4fc' : '#64748b', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>New grad</p>
-                <p style={{ color: '#475569', fontSize: '12px', lineHeight: 1.45 }}>{r.blurb}</p>
+                <p style={{ color: active ? '#4f46e5' : '#64748b', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>New grad</p>
+                <p style={{ color: '#64748b', fontSize: '12px', lineHeight: 1.45 }}>{r.blurb}</p>
               </div>
             </button>
           );
@@ -103,7 +103,7 @@ export default function RoleSelector({ onStart }) {
       {/* ── Settings: difficulty + count ── */}
       {selected && (
         <div className="fade-in" style={{
-          background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+          background: '#ffffff', border: '1px solid #e2e6ec',
           borderRadius: '16px', padding: isMobile ? '18px' : '24px', marginBottom: '24px',
         }}>
           <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
@@ -113,9 +113,9 @@ export default function RoleSelector({ onStart }) {
                 {['Easy', 'Medium', 'Hard'].map(d => (
                   <button key={d} onClick={() => setDifficulty(d)} style={{
                     flex: 1, padding: '10px', borderRadius: '8px', fontSize: '13px', fontWeight: '600',
-                    background: difficulty === d ? (d === 'Easy' ? 'rgba(74,222,128,0.15)' : d === 'Medium' ? 'rgba(251,191,36,0.15)' : 'rgba(248,113,113,0.15)') : 'rgba(255,255,255,0.04)',
-                    border: `1px solid ${difficulty === d ? (d === 'Easy' ? 'rgba(74,222,128,0.4)' : d === 'Medium' ? 'rgba(251,191,36,0.4)' : 'rgba(248,113,113,0.4)') : 'rgba(255,255,255,0.08)'}`,
-                    color: difficulty === d ? (d === 'Easy' ? '#4ade80' : d === 'Medium' ? '#fbbf24' : '#f87171') : '#64748b',
+                    background: difficulty === d ? (d === 'Easy' ? 'rgba(74,222,128,0.15)' : d === 'Medium' ? 'rgba(251,191,36,0.15)' : 'rgba(248,113,113,0.15)') : '#f8fafc',
+                    border: `1px solid ${difficulty === d ? (d === 'Easy' ? 'rgba(74,222,128,0.4)' : d === 'Medium' ? 'rgba(251,191,36,0.4)' : 'rgba(248,113,113,0.4)') : '#e2e6ec'}`,
+                    color: difficulty === d ? (d === 'Easy' ? '#16a34a' : d === 'Medium' ? '#d97706' : '#dc2626') : '#64748b',
                     transition: 'all 0.15s',
                   }}>{d}</button>
                 ))}
@@ -128,9 +128,9 @@ export default function RoleSelector({ onStart }) {
                 {[5, 10, 15].map(n => (
                   <button key={n} onClick={() => setCount(n)} style={{
                     flex: 1, padding: '10px', borderRadius: '8px', fontSize: '13px', fontWeight: '600',
-                    background: count === n ? 'rgba(99,102,241,0.15)' : 'rgba(255,255,255,0.04)',
-                    border: `1px solid ${count === n ? 'rgba(99,102,241,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                    color: count === n ? '#c7d2fe' : '#64748b',
+                    background: count === n ? 'rgba(99,102,241,0.15)' : '#f8fafc',
+                    border: `1px solid ${count === n ? 'rgba(99,102,241,0.4)' : '#e2e6ec'}`,
+                    color: count === n ? '#4f46e5' : '#64748b',
                     transition: 'all 0.15s',
                   }}>{n}</button>
                 ))}
@@ -146,10 +146,10 @@ export default function RoleSelector({ onStart }) {
           onClick={handleStart}
           disabled={!canStart}
           style={{
-            background: canStart ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'rgba(255,255,255,0.06)',
+            background: canStart ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : '#eef1f5',
             border: 'none', borderRadius: '16px',
             padding: isMobile ? '15px 0' : '16px 48px', fontSize: '16px', fontWeight: '700',
-            color: canStart ? 'white' : '#334155',
+            color: canStart ? 'white' : '#94a3b8',
             cursor: canStart ? 'pointer' : 'default',
             transition: 'all 0.2s', width: isMobile ? '100%' : 'auto',
             boxShadow: canStart ? '0 4px 24px rgba(99,102,241,0.4)' : 'none',

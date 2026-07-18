@@ -25,7 +25,7 @@ function StarPanel({ star }) {
           const c = star[key] || {};
           const good = c.present && c.score >= 2;
           const partial = c.present && c.score === 1;
-          const color = good ? '#4ade80' : partial ? '#fbbf24' : '#f87171';
+          const color = good ? '#16a34a' : partial ? '#d97706' : '#dc2626';
           const bg = good ? 'rgba(74,222,128,0.1)' : partial ? 'rgba(251,191,36,0.1)' : 'rgba(248,113,113,0.08)';
           return (
             <div key={key} title={c.note || ''} style={{
@@ -33,7 +33,7 @@ function StarPanel({ star }) {
               padding: '10px 6px', textAlign: 'center',
             }}>
               <div style={{ color, fontSize: '20px', fontWeight: '800', lineHeight: 1 }}>{letter}</div>
-              <div style={{ color: '#94a3b8', fontSize: '10px', fontWeight: '600', marginTop: '4px' }}>{label}</div>
+              <div style={{ color: '#475569', fontSize: '10px', fontWeight: '600', marginTop: '4px' }}>{label}</div>
               <div style={{ color, fontSize: '13px', marginTop: '4px' }}>{good ? '✓' : partial ? '~' : '✗'}</div>
             </div>
           );
@@ -47,7 +47,7 @@ function StarPanel({ star }) {
           return (
             <div key={key} style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
               <span style={{ color: '#c084fc', fontSize: '11px', fontWeight: '700', flexShrink: 0, width: '58px' }}>{label}</span>
-              <span style={{ color: '#94a3b8', fontSize: '12px', lineHeight: '1.5' }}>{note}</span>
+              <span style={{ color: '#475569', fontSize: '12px', lineHeight: '1.5' }}>{note}</span>
             </div>
           );
         })}
@@ -57,7 +57,7 @@ function StarPanel({ star }) {
           marginTop: '12px', padding: '10px 12px',
           background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: '10px',
         }}>
-          <p style={{ color: '#fbbf24', fontSize: '12px', lineHeight: '1.5' }}>💡 {star.tip}</p>
+          <p style={{ color: '#d97706', fontSize: '12px', lineHeight: '1.5' }}>💡 {star.tip}</p>
         </div>
       )}
     </div>
@@ -69,7 +69,7 @@ export default function Feedback({ evaluation, question, onNext, isLast, hasFoll
   const [showModel, setShowModel] = useState(false);
   const { score, verdict, feedback, strengths, improvements, model_answer, keywords_mentioned, keywords_missed, star } = evaluation;
 
-  const scoreColor = score >= 8 ? '#4ade80' : score >= 6 ? '#fbbf24' : score >= 4 ? '#f97316' : '#f87171';
+  const scoreColor = score >= 8 ? '#16a34a' : score >= 6 ? '#d97706' : score >= 4 ? '#f97316' : '#dc2626';
   const verdictBg = score >= 8 ? 'rgba(74,222,128,0.1)' : score >= 6 ? 'rgba(251,191,36,0.1)' : 'rgba(248,113,113,0.1)';
   const verdictBorder = score >= 8 ? 'rgba(74,222,128,0.3)' : score >= 6 ? 'rgba(251,191,36,0.3)' : 'rgba(248,113,113,0.3)';
 
@@ -85,22 +85,22 @@ export default function Feedback({ evaluation, question, onNext, isLast, hasFoll
         {/* Score circle */}
         <div style={{
           width: '80px', height: '80px', borderRadius: '50%', flexShrink: 0,
-          background: `conic-gradient(${scoreColor} ${score * 36}deg, rgba(255,255,255,0.06) 0deg)`,
+          background: `conic-gradient(${scoreColor} ${score * 36}deg, #eef1f5 0deg)`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: `0 0 24px ${scoreColor}40`,
         }}>
           <div style={{
-            width: '62px', height: '62px', borderRadius: '50%', background: '#0f0f1e',
+            width: '62px', height: '62px', borderRadius: '50%', background: '#ffffff',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           }}>
             <span style={{ color: scoreColor, fontSize: '20px', fontWeight: '800', lineHeight: 1 }}>{score}</span>
-            <span style={{ color: '#475569', fontSize: '10px', fontWeight: '600' }}>/10</span>
+            <span style={{ color: '#64748b', fontSize: '10px', fontWeight: '600' }}>/10</span>
           </div>
         </div>
 
         <div>
           <p style={{ color: scoreColor, fontSize: '20px', fontWeight: '800', marginBottom: '6px' }}>{verdict}</p>
-          <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: '1.6' }}>{feedback}</p>
+          <p style={{ color: '#475569', fontSize: '14px', lineHeight: '1.6' }}>{feedback}</p>
         </div>
       </div>
 
@@ -113,13 +113,13 @@ export default function Feedback({ evaluation, question, onNext, isLast, hasFoll
           background: 'rgba(74,222,128,0.06)', border: '1px solid rgba(74,222,128,0.2)',
           borderRadius: '14px', padding: '18px',
         }}>
-          <p style={{ color: '#4ade80', fontWeight: '700', fontSize: '13px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <p style={{ color: '#16a34a', fontWeight: '700', fontSize: '13px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             ✅ Strengths
           </p>
           {(strengths || []).map((s, i) => (
             <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-              <span style={{ color: '#4ade80', flexShrink: 0, marginTop: '2px' }}>•</span>
-              <p style={{ color: '#94a3b8', fontSize: '13px', lineHeight: '1.5' }}>{s}</p>
+              <span style={{ color: '#16a34a', flexShrink: 0, marginTop: '2px' }}>•</span>
+              <p style={{ color: '#475569', fontSize: '13px', lineHeight: '1.5' }}>{s}</p>
             </div>
           ))}
         </div>
@@ -128,13 +128,13 @@ export default function Feedback({ evaluation, question, onNext, isLast, hasFoll
           background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.2)',
           borderRadius: '14px', padding: '18px',
         }}>
-          <p style={{ color: '#f87171', fontWeight: '700', fontSize: '13px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <p style={{ color: '#dc2626', fontWeight: '700', fontSize: '13px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             📈 Improve
           </p>
           {(improvements || []).map((imp, i) => (
             <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-              <span style={{ color: '#f87171', flexShrink: 0, marginTop: '2px' }}>•</span>
-              <p style={{ color: '#94a3b8', fontSize: '13px', lineHeight: '1.5' }}>{imp}</p>
+              <span style={{ color: '#dc2626', flexShrink: 0, marginTop: '2px' }}>•</span>
+              <p style={{ color: '#475569', fontSize: '13px', lineHeight: '1.5' }}>{imp}</p>
             </div>
           ))}
         </div>
@@ -142,27 +142,27 @@ export default function Feedback({ evaluation, question, onNext, isLast, hasFoll
 
       {/* Keywords */}
       <div style={{
-        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+        background: '#ffffff', border: '1px solid #e2e6ec',
         borderRadius: '14px', padding: '18px', marginBottom: '20px',
       }}>
-        <p style={{ color: '#94a3b8', fontWeight: '700', fontSize: '13px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        <p style={{ color: '#475569', fontWeight: '700', fontSize: '13px', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
           🔑 Keywords
         </p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
           {(keywords_mentioned || []).map(k => (
             <span key={k} style={{
               background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.25)',
-              color: '#4ade80', fontSize: '12px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px',
+              color: '#16a34a', fontSize: '12px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px',
             }}>✓ {k}</span>
           ))}
           {(keywords_missed || []).map(k => (
             <span key={k} style={{
               background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)',
-              color: '#f87171', fontSize: '12px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px',
+              color: '#dc2626', fontSize: '12px', fontWeight: '600', padding: '3px 10px', borderRadius: '20px',
             }}>✗ {k}</span>
           ))}
         </div>
-        <p style={{ color: '#334155', fontSize: '11px' }}>Green = mentioned · Red = missed</p>
+        <p style={{ color: '#94a3b8', fontSize: '11px' }}>Green = mentioned · Red = missed</p>
       </div>
 
       {/* Model Answer */}
@@ -173,21 +173,21 @@ export default function Feedback({ evaluation, question, onNext, isLast, hasFoll
         <button
           onClick={() => setShowModel(!showModel)}
           style={{
-            background: 'none', border: 'none', color: '#818cf8',
+            background: 'none', border: 'none', color: '#4f46e5',
             fontWeight: '700', fontSize: '14px', cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: '8px', width: '100%', textAlign: 'left',
           }}
         >
           🎯 {showModel ? 'Hide' : 'Show'} Model Answer
-          <span style={{ color: '#475569', fontSize: '12px', marginLeft: 'auto' }}>
+          <span style={{ color: '#64748b', fontSize: '12px', marginLeft: 'auto' }}>
             {showModel ? '▲' : '▼'}
           </span>
         </button>
         {showModel && (
           <p className="fade-in" style={{
-            color: '#94a3b8', fontSize: '14px', lineHeight: '1.7',
+            color: '#475569', fontSize: '14px', lineHeight: '1.7',
             marginTop: '14px', paddingTop: '14px',
-            borderTop: '1px solid rgba(255,255,255,0.06)',
+            borderTop: '1px solid #eef1f5',
           }}>
             {model_answer}
           </p>

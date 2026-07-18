@@ -29,7 +29,7 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
   const bestScore = totalSessions > 0 ? Math.max(...sessions.map(s => s.overallScore || 0)) : 0;
   const recentSessions = sessions.slice(0, 5);
 
-  const scoreColor = (s) => s >= 8 ? '#4ade80' : s >= 6 ? '#fbbf24' : '#f87171';
+  const scoreColor = (s) => s >= 8 ? '#16a34a' : s >= 6 ? '#d97706' : '#dc2626';
 
   // MVP: streak/level removed.
   // const streak = stats?.streak || 0;
@@ -51,28 +51,28 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(160px, 1fr))', gap: isMobile ? '10px' : '16px', marginBottom: '28px' }}>
         {[
-          { label: 'Sessions', value: totalSessions, icon: '🎯', color: '#818cf8' },
-          { label: 'Avg Score', value: `${avgScore}/10`, icon: '📊', color: avgScore >= 7 ? '#4ade80' : '#fbbf24' },
-          { label: 'Best Score', value: `${bestScore}/10`, icon: '🏆', color: '#fbbf24' },
-          { label: 'Status', value: avgScore >= 8 ? 'Ready!' : avgScore >= 6 ? 'Getting there' : 'Keep going', icon: '💪', color: '#a5b4fc', small: true },
+          { label: 'Sessions', value: totalSessions, icon: '🎯', color: '#4f46e5' },
+          { label: 'Avg Score', value: `${avgScore}/10`, icon: '📊', color: avgScore >= 7 ? '#16a34a' : '#d97706' },
+          { label: 'Best Score', value: `${bestScore}/10`, icon: '🏆', color: '#d97706' },
+          { label: 'Status', value: avgScore >= 8 ? 'Ready!' : avgScore >= 6 ? 'Getting there' : 'Keep going', icon: '💪', color: '#4f46e5', small: true },
         ].map(stat => (
           <div key={stat.label} style={{
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
+            background: '#ffffff', border: '1px solid #e2e6ec',
             borderRadius: '16px', padding: isMobile ? '16px' : '20px', textAlign: 'center',
           }}>
             <p style={{ fontSize: isMobile ? '24px' : '28px', marginBottom: '8px' }}>{stat.icon}</p>
             <p style={{ color: stat.color, fontSize: stat.small ? '14px' : (isMobile ? '20px' : '24px'), fontWeight: '800', marginBottom: '4px', lineHeight: 1 }}>
               {stat.value}
             </p>
-            <p style={{ color: '#475569', fontSize: '12px', fontWeight: '600' }}>{stat.label}</p>
+            <p style={{ color: '#64748b', fontSize: '12px', fontWeight: '600' }}>{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* Score trend chart */}
       {trend.length >= 2 && (
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '20px', marginBottom: '28px' }}>
-          <h3 style={{ color: '#94a3b8', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2e6ec', borderRadius: '16px', padding: '20px', marginBottom: '28px' }}>
+          <h3 style={{ color: '#475569', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
             📈 Score Trend
           </h3>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '90px' }}>
@@ -84,7 +84,7 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
                   background: `linear-gradient(180deg, ${scoreColor(v)}, ${scoreColor(v)}66)`,
                   borderRadius: '6px 6px 2px 2px', transition: 'height 0.5s ease',
                 }} title={`${v}/10`} />
-                <span style={{ color: '#475569', fontSize: '9px', fontWeight: 700 }}>{v}</span>
+                <span style={{ color: '#64748b', fontSize: '9px', fontWeight: 700 }}>{v}</span>
               </div>
             ))}
           </div>
@@ -107,22 +107,22 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
       {/* Recent Sessions */}
       {recentSessions.length > 0 && (
         <div>
-          <h3 style={{ color: '#94a3b8', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px' }}>
+          <h3 style={{ color: '#475569', fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px' }}>
             Recent Sessions
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {recentSessions.map(session => (
               <div key={session.id} style={{
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)',
+                background: '#ffffff', border: '1px solid #e6e9ef',
                 borderRadius: '12px', padding: '14px 18px',
                 display: 'flex', alignItems: 'center', gap: '14px',
               }}>
                 <span style={{ fontSize: '20px', flexShrink: 0 }}>{session.categoryIcon || '🎯'}</span>
                 <div style={{ flex: 1, overflow: 'hidden' }}>
-                  <p style={{ color: '#e2e8f0', fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <p style={{ color: '#1e293b', fontWeight: '600', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {session.role}
                   </p>
-                  <p style={{ color: '#475569', fontSize: '12px', marginTop: '2px' }}>
+                  <p style={{ color: '#64748b', fontSize: '12px', marginTop: '2px' }}>
                     {session.categoryLabel} · {session.difficulty} · {session.createdAt?.toDate?.()?.toLocaleDateString()}
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
                   <p style={{ color: scoreColor(session.overallScore || 0), fontSize: '18px', fontWeight: '800', lineHeight: 1 }}>
                     {session.overallScore || '–'}
                   </p>
-                  <p style={{ color: '#334155', fontSize: '11px' }}>/10</p>
+                  <p style={{ color: '#94a3b8', fontSize: '11px' }}>/10</p>
                 </div>
               </div>
             ))}
@@ -139,10 +139,10 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
       )}
 
       {totalSessions === 0 && (
-        <div style={{ textAlign: 'center', padding: '40px', color: '#334155' }}>
+        <div style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
           <p style={{ fontSize: '40px', marginBottom: '14px' }}>🎯</p>
           <p style={{ color: '#64748b', fontWeight: '600', fontSize: '16px', marginBottom: '6px' }}>No sessions yet</p>
-          <p style={{ color: '#334155', fontSize: '14px' }}>Start your first interview practice above!</p>
+          <p style={{ color: '#94a3b8', fontSize: '14px' }}>Start your first interview practice above!</p>
         </div>
       )}
     </div>

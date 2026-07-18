@@ -7,17 +7,17 @@ export default function Login() {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', background: '#080812', position: 'relative', overflow: 'hidden',
+      justifyContent: 'center', background: '#f6f7f9', position: 'relative', overflow: 'hidden',
     }}>
       <div style={{ position: 'fixed', top: '-10%', left: '-5%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 65%)', pointerEvents: 'none' }} />
       <div style={{ position: 'fixed', bottom: '-15%', right: '-5%', width: '600px', height: '600px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 65%)', pointerEvents: 'none' }} />
 
       <div className="fade-in" style={{
         textAlign: 'center', padding: '52px 48px',
-        background: 'rgba(255,255,255,0.03)', borderRadius: '28px',
-        border: '1px solid rgba(255,255,255,0.08)',
+        background: '#ffffff', borderRadius: '28px',
+        border: '1px solid #e2e6ec',
         backdropFilter: 'blur(20px)', maxWidth: '460px', width: '90%',
-        boxShadow: '0 40px 100px rgba(0,0,0,0.5)',
+        boxShadow: '0 24px 60px rgba(15,23,42,0.10)',
       }}>
         <div style={{
           width: '72px', height: '72px', borderRadius: '20px',
@@ -29,35 +29,35 @@ export default function Login() {
 
         <h1 style={{
           fontSize: '2.2rem', fontWeight: '800', marginBottom: '10px',
-          background: 'linear-gradient(135deg, #fff, #a5b4fc)',
+          background: 'linear-gradient(135deg, #0f172a, #4f46e5)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           letterSpacing: '-0.5px',
         }}>AI Interview Coach</h1>
 
-        <p style={{ color: '#94a3b8', fontSize: '15px', marginBottom: '10px', fontWeight: '500' }}>
-          Practice interviews with AI — speak or type your answers and get instant, honest feedback
+        <p style={{ color: '#475569', fontSize: '15px', marginBottom: '10px', fontWeight: '500' }}>
+          Mock interviews for new-grad AI, ML &amp; Software Engineering roles — speak or type your answers and get instant, honest feedback
         </p>
 
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '36px', flexWrap: 'wrap' }}>
-          {['🎙 Voice answers', '🤖 AI Feedback', '🔥 Daily streaks', '📄 Resume-tailored', '📊 Progress'].map(f => (
+          {['🎙 Voice answers', '🤖 AI feedback', '📊 Instant scoring', '🎯 New-grad roles'].map(f => (
             <span key={f} style={{
               background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.2)',
               borderRadius: '20px', padding: '4px 12px', fontSize: '12px',
-              color: '#a5b4fc', fontWeight: '600',
+              color: '#4f46e5', fontWeight: '600',
             }}>{f}</span>
           ))}
         </div>
 
         <button onClick={signIn} style={{
           display: 'flex', alignItems: 'center', gap: '12px',
-          background: 'white', color: '#0f0f1a', border: 'none',
+          background: 'white', color: '#0f172a', border: '1px solid #e2e6ec',
           padding: '15px 32px', borderRadius: '14px',
           fontSize: '15px', fontWeight: '700', margin: '0 auto',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+          boxShadow: '0 4px 16px rgba(15,23,42,0.08)',
           transition: 'all 0.2s',
         }}
-          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(0,0,0,0.4)'; }}
-          onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3)'; }}
+          onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(15,23,42,0.14)'; }}
+          onMouseOut={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(15,23,42,0.08)'; }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
