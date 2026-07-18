@@ -123,6 +123,7 @@ export default function QuestionCard({ question, index, total, onSubmit, loading
                 <button
                   onClick={() => speak(question.question)}
                   title="Replay question"
+                  aria-label="Replay question aloud"
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: '5px',
                     background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)',
@@ -134,6 +135,8 @@ export default function QuestionCard({ question, index, total, onSubmit, loading
               <button
                 onClick={toggleMute}
                 title={muted ? 'Unmute interviewer voice' : 'Mute interviewer voice'}
+                aria-label={muted ? 'Unmute interviewer voice' : 'Mute interviewer voice'}
+                aria-pressed={!muted}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '5px',
                   background: muted ? '#f8fafc' : 'rgba(99,102,241,0.12)',
@@ -201,6 +204,8 @@ export default function QuestionCard({ question, index, total, onSubmit, loading
           {voiceSupported && (
             <button
               onClick={listening ? stop : start}
+              aria-label={listening ? 'Stop voice dictation' : 'Answer using your voice'}
+              aria-pressed={listening}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
                 background: listening ? 'rgba(248,113,113,0.15)' : 'rgba(99,102,241,0.12)',

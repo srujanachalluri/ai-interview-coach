@@ -8,7 +8,7 @@ import { useIsMobile } from './hooks/useIsMobile';
 // Gamification (XP / streak / level / rewards) — commented out for the minimal MVP.
 // import { subscribeStats, applySessionResult } from './lib/profile';
 // import { levelProgress } from './lib/gamification';
-import Login from './components/Auth/Login';
+import Landing from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/Dashboard';
 import RoleSelector from './components/Interview/RoleSelector';
 import QuestionCard from './components/Interview/QuestionCard';
@@ -50,6 +50,7 @@ export default function App() {
 
   // Loading states
   const [loadingQuestions, setLoadingQuestions] = useState(false);
+  const [slowLoad, setSlowLoad] = useState(false);   // backend cold-start (Render free tier)
   const [loadingEval, setLoadingEval] = useState(false);
   const [loadingSummary, setLoadingSummary] = useState(false);
 
@@ -110,6 +111,7 @@ export default function App() {
   // ── Start interview ─────────────────────────────────────────────────────────
   const handleStart = async (config) => {
     setLoadingQuestions(true);
+    setSlowLoad(false);
     setSessionConfig(config);
     setAnswers([]);
     setCurrentIndex(0);
@@ -117,6 +119,10 @@ export default function App() {
     setSummary(null);
     setPendingFollowUp(null);
     followUpCountRef.current = 0;
+
+    // The backend sleeps on Render's free tier; the first call can take ~30–50s
+    // to wake. Surface a friendly message so it never looks frozen.
+    const slowTimer = setTimeout(() => setSlowLoad(true), 8000);
 
     try {
       const data = await api.getQuestions(
@@ -132,6 +138,8 @@ export default function App() {
     } catch (err) {
       toast.error(err.message);
     }
+    clearTimeout(slowTimer);
+    setSlowLoad(false);
     setLoadingQuestions(false);
   };
 
@@ -287,7 +295,7 @@ export default function App() {
     </div>
   );
 
-  if (!user) return <Login />;
+  if (!user) return <Landing />;
 
   // const lp = levelProgress(stats?.xp || 0);   // MVP: level/XP off
   const desktopTabs = [
@@ -369,6 +377,15 @@ export default function App() {
             <p style={{ color: '#64748b', fontSize: '14px' }}>
               AI is creating {sessionConfig?.count} {sessionConfig?.difficulty} questions for {sessionConfig?.role}
             </p>
+            {slowLoad && (
+              <p className="fade-in" style={{
+                color: '#4f46e5', fontSize: '13px', marginTop: '16px', fontWeight: 600,
+                background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)',
+                borderRadius: '10px', padding: '10px 14px', display: 'inline-block', maxWidth: '360px',
+              }}>
+                ☕ Waking up the interviewer — the free server was asleep. This first request can take up to a minute; it's instant after that.
+              </p>
+            )}
           </div>
         )}
 
