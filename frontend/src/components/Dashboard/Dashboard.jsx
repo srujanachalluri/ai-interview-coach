@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 import { useIsMobile } from '../../hooks/useIsMobile';
-import { levelProgress } from '../../lib/gamification';
+// import { levelProgress } from '../../lib/gamification';   // MVP: level/XP off
 
 export default function Dashboard({ onStartNew, onViewProfile, stats }) {
   const isMobile = useIsMobile();
@@ -31,8 +31,9 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
 
   const scoreColor = (s) => s >= 8 ? '#4ade80' : s >= 6 ? '#fbbf24' : '#f87171';
 
-  const streak = stats?.streak || 0;
-  const lp = levelProgress(stats?.xp || 0);
+  // MVP: streak/level removed.
+  // const streak = stats?.streak || 0;
+  // const lp = levelProgress(stats?.xp || 0);
 
   // Score trend: oldest → newest of the last up-to-10 sessions.
   const trend = [...sessions].slice(0, 10).reverse().map(s => s.overallScore || 0);
@@ -45,60 +46,7 @@ export default function Dashboard({ onStartNew, onViewProfile, stats }) {
 
   return (
     <div className="fade-in">
-      {/* Streak + Level hero strip */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.4fr',
-        gap: '14px', marginBottom: '20px',
-      }}>
-        {/* Streak */}
-        <div
-          onClick={onViewProfile}
-          style={{
-            background: 'linear-gradient(135deg, rgba(251,146,60,0.15), rgba(248,113,113,0.1))',
-            border: '1px solid rgba(251,146,60,0.25)', borderRadius: '18px',
-            padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer',
-          }}
-        >
-          <div style={{ fontSize: '40px' }}><span className="flame">🔥</span></div>
-          <div>
-            <p style={{ color: '#fb923c', fontSize: '28px', fontWeight: 800, lineHeight: 1 }}>{streak}</p>
-            <p style={{ color: '#94a3b8', fontSize: '13px', fontWeight: 600, marginTop: '4px' }}>
-              day streak{streak > 0 ? ' — keep it alive!' : ' — start today'}
-            </p>
-          </div>
-        </div>
-
-        {/* Level + XP */}
-        <div
-          onClick={onViewProfile}
-          style={{
-            background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)',
-            borderRadius: '18px', padding: '20px', cursor: 'pointer',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{
-                width: '34px', height: '34px', borderRadius: '10px',
-                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontWeight: 800, fontSize: '14px',
-              }}>{lp.level}</span>
-              <span style={{ color: '#c7d2fe', fontWeight: 700, fontSize: '15px' }}>Level {lp.level}</span>
-            </div>
-            <span style={{ color: '#64748b', fontSize: '12px', fontWeight: 600 }}>{lp.toNext} XP to next</span>
-          </div>
-          <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '8px', height: '8px' }}>
-            <div style={{
-              width: `${lp.pct}%`, height: '100%', borderRadius: '8px',
-              background: 'linear-gradient(90deg, #6366f1, #8b5cf6)', transition: 'width 0.6s ease',
-            }} />
-          </div>
-          <p style={{ color: '#64748b', fontSize: '12px', marginTop: '8px', fontWeight: 600 }}>
-            {(stats?.xp || 0).toLocaleString()} total XP
-          </p>
-        </div>
-      </div>
+      {/* MVP: streak + level hero strip removed for a cleaner, professional look. */}
 
       {/* Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fit, minmax(160px, 1fr))', gap: isMobile ? '10px' : '16px', marginBottom: '28px' }}>

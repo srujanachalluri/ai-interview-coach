@@ -5,8 +5,9 @@ import toast, { Toaster } from 'react-hot-toast';
 import { auth, db } from './firebase';
 import { api } from './api';
 import { useIsMobile } from './hooks/useIsMobile';
-import { subscribeStats, applySessionResult } from './lib/profile';
-import { levelProgress } from './lib/gamification';
+// Gamification (XP / streak / level / rewards) — commented out for the minimal MVP.
+// import { subscribeStats, applySessionResult } from './lib/profile';
+// import { levelProgress } from './lib/gamification';
 import Login from './components/Auth/Login';
 import Dashboard from './components/Dashboard/Dashboard';
 import RoleSelector from './components/Interview/RoleSelector';
@@ -14,10 +15,10 @@ import QuestionCard from './components/Interview/QuestionCard';
 import Feedback from './components/Interview/Feedback';
 import SessionSummary from './components/Interview/SessionSummary';
 import History from './components/History/History';
-import Profile from './components/Profile/Profile';
+// import Profile from './components/Profile/Profile';   // MVP: profile tab hidden
 import Avatar from './components/common/Avatar';
 import BottomNav from './components/common/BottomNav';
-import RewardModal from './components/common/RewardModal';
+// import RewardModal from './components/common/RewardModal';   // MVP: rewards off
 
 // ── Screens: 'dashboard' | 'select' | 'interview' | 'feedback' | 'summary' | 'history' | 'profile'
 
@@ -27,7 +28,8 @@ export default function App() {
   const isMobile = useIsMobile();
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [stats, setStats] = useState(null);
+  // const [stats, setStats] = useState(null);   // MVP: gamification stats off
+  const stats = null;
 
   const [screen, setScreen] = useState('dashboard');
 
@@ -38,7 +40,13 @@ export default function App() {
   const [answers, setAnswers] = useState([]);                  // [{question, answer, score, verdict, evaluation}]
   const [currentEvaluation, setCurrentEvaluation] = useState(null);
   const [summary, setSummary] = useState(null);
-  const [reward, setReward] = useState(null);
+  // const [reward, setReward] = useState(null);   // MVP: reward modal off
+
+  // Adaptive follow-ups (talk-to-it interviewer)
+  const [followUpsOn, setFollowUpsOn] = useState(true);
+  const [pendingFollowUp, setPendingFollowUp] = useState(null);  // the next follow-up question, if any
+  const followUpCountRef = useRef(0);
+  const MAX_FOLLOWUPS = 4;
 
   // Loading states
   const [loadingQuestions, setLoadingQuestions] = useState(false);
@@ -56,11 +64,12 @@ export default function App() {
     return unsub;
   }, []);
 
-  useEffect(() => {
-    if (!user) { setStats(null); return; }
-    const unsub = subscribeStats(user.uid, setStats);
-    return unsub;
-  }, [user]);
+  // MVP: gamification stats subscription disabled.
+  // useEffect(() => {
+  //   if (!user) { setStats(null); return; }
+  //   const unsub = subscribeStats(user.uid, setStats);
+  //   return unsub;
+  // }, [user]);
 
   // ── Restore an in-progress interview after login (once) ──────────────────────
   useEffect(() => {
@@ -106,6 +115,8 @@ export default function App() {
     setCurrentIndex(0);
     setCurrentEvaluation(null);
     setSummary(null);
+    setPendingFollowUp(null);
+    followUpCountRef.current = 0;
 
     try {
       const data = await api.getQuestions(
@@ -127,6 +138,7 @@ export default function App() {
   // ── Submit answer ───────────────────────────────────────────────────────────
   const handleSubmitAnswer = async (answer) => {
     setLoadingEval(true);
+    setPendingFollowUp(null);
     const question = questions[currentIndex];
 
     try {
@@ -148,6 +160,20 @@ export default function App() {
         evaluation: evalResult,
       }]);
       setScreen('feedback');
+
+      // Adaptive follow-up: let the interviewer decide whether to dig deeper.
+      // Fire-and-forget — a failure or slow reply must never block the flow.
+      const canFollowUp =
+        followUpsOn &&
+        question.type !== 'follow-up' &&
+        followUpCountRef.current < MAX_FOLLOWUPS;
+      if (canFollowUp) {
+        api.followup(question.question, answer, sessionConfig.role, sessionConfig.category.label)
+          .then(res => {
+            if (res?.should_followup && res?.followup) setPendingFollowUp(res.followup);
+          })
+          .catch(() => { /* silent — follow-ups are best-effort */ });
+      }
     } catch (err) {
       toast.error(err.message);
     }
@@ -156,6 +182,27 @@ export default function App() {
 
   // ── Next question ───────────────────────────────────────────────────────────
   const handleNext = () => {
+    // If the interviewer has a follow-up queued, insert it as the next question.
+    if (pendingFollowUp) {
+      const fu = {
+        id: `fu-${Date.now()}`,
+        question: pendingFollowUp,
+        type: 'follow-up',
+        hint: 'This builds on your last answer — be specific and concrete.',
+      };
+      followUpCountRef.current += 1;
+      setPendingFollowUp(null);
+      setQuestions(prev => {
+        const next = [...prev];
+        next.splice(currentIndex + 1, 0, fu);
+        return next;
+      });
+      setCurrentIndex(prev => prev + 1);
+      setCurrentEvaluation(null);
+      setScreen('interview');
+      return;
+    }
+
     if (currentIndex >= questions.length - 1) {
       handleFinish();
     } else {
@@ -200,17 +247,17 @@ export default function App() {
         createdAt: serverTimestamp(),
       });
 
-      // Gamification: XP, streak, badges.
-      const scores = finishedAnswers.map(a => a.score || 0);
-      const avgScore = scores.length ? scores.reduce((s, n) => s + n, 0) / scores.length : 0;
-      const result = await applySessionResult(user.uid, {
-        questions: questions.length,
-        avgScore,
-        difficulty: sessionConfig.difficulty,
-        categoryLabel: sessionConfig.category.label,
-        hadPerfect: scores.some(s => s >= 10),
-      });
-      setReward(result);
+      // MVP: gamification (XP / streak / badges / reward modal) disabled.
+      // const scores = finishedAnswers.map(a => a.score || 0);
+      // const avgScore = scores.length ? scores.reduce((s, n) => s + n, 0) / scores.length : 0;
+      // const result = await applySessionResult(user.uid, {
+      //   questions: questions.length,
+      //   avgScore,
+      //   difficulty: sessionConfig.difficulty,
+      //   categoryLabel: sessionConfig.category.label,
+      //   hadPerfect: scores.some(s => s >= 10),
+      // });
+      // setReward(result);
       clearProgress();
     } catch (err) {
       toast.error('Failed to generate summary: ' + err.message);
@@ -228,6 +275,8 @@ export default function App() {
     setCurrentEvaluation(null);
     setSummary(null);
     setSessionConfig(null);
+    setPendingFollowUp(null);
+    followUpCountRef.current = 0;
   };
 
   // ── Auth guard ──────────────────────────────────────────────────────────────
@@ -240,14 +289,14 @@ export default function App() {
 
   if (!user) return <Login />;
 
-  const lp = levelProgress(stats?.xp || 0);
+  // const lp = levelProgress(stats?.xp || 0);   // MVP: level/XP off
   const desktopTabs = [
     { id: 'dashboard', label: '🏠 Home' },
     { id: 'select', label: '🎯 Practice' },
     { id: 'history', label: '📚 History' },
-    { id: 'profile', label: '🏆 Profile' },
+    // { id: 'profile', label: '🏆 Profile' },   // MVP: profile tab hidden
   ];
-  const showNav = ['dashboard', 'select', 'history', 'profile'].includes(screen);
+  const showNav = ['dashboard', 'select', 'history'].includes(screen);
 
   return (
     <div style={{ minHeight: '100vh', background: '#080812' }}>
@@ -255,7 +304,8 @@ export default function App() {
         style: { background: '#1e1e32', color: '#f1f5f9', border: '1px solid rgba(255,255,255,0.1)' }
       }} />
 
-      {reward && <RewardModal reward={reward} onClose={() => setReward(null)} />}
+      {/* MVP: reward modal disabled */}
+      {/* {reward && <RewardModal reward={reward} onClose={() => setReward(null)} />} */}
 
       {/* ── Top bar ── */}
       <nav style={{
@@ -289,28 +339,9 @@ export default function App() {
           </div>
         )}
 
-        {/* Right side: streak + level + avatar */}
+        {/* Right side: avatar + sign out (streak/level chips removed for MVP) */}
         <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '12px' }}>
-          {stats && (stats.streak > 0) && (
-            <div onClick={() => setScreen('profile')} style={{
-              display: 'flex', alignItems: 'center', gap: '4px',
-              background: 'rgba(251,146,60,0.12)', border: '1px solid rgba(251,146,60,0.25)',
-              borderRadius: '20px', padding: '4px 10px', cursor: 'pointer',
-            }} title="Practice streak">
-              <span className="flame" style={{ fontSize: '14px' }}>🔥</span>
-              <span style={{ color: '#fb923c', fontSize: '13px', fontWeight: 800 }}>{stats.streak}</span>
-            </div>
-          )}
-          {stats && !isMobile && (
-            <div onClick={() => setScreen('profile')} style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              background: 'rgba(99,102,241,0.12)', border: '1px solid rgba(99,102,241,0.25)',
-              borderRadius: '20px', padding: '4px 10px', cursor: 'pointer',
-            }} title="Your level">
-              <span style={{ color: '#a5b4fc', fontSize: '12px', fontWeight: 800 }}>Lv {lp.level}</span>
-            </div>
-          )}
-          <div onClick={() => setScreen('profile')} style={{ cursor: 'pointer', display: 'flex' }}>
+          <div style={{ display: 'flex' }}>
             <Avatar user={user} size={30} />
           </div>
           {!isMobile && (
@@ -393,9 +424,19 @@ export default function App() {
                 fontSize: '13px', fontWeight: '700',
               }}>{sessionConfig?.difficulty}</span>
               <button
+                onClick={() => setFollowUpsOn(v => !v)}
+                title="When on, the interviewer asks adaptive follow-up questions based on your answers"
+                style={{
+                  marginLeft: 'auto', background: followUpsOn ? 'rgba(168,85,247,0.12)' : 'none',
+                  border: `1px solid ${followUpsOn ? 'rgba(168,85,247,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                  color: followUpsOn ? '#d8b4fe' : '#475569', borderRadius: '8px',
+                  padding: '6px 14px', fontSize: '12px', fontWeight: '600',
+                }}
+              >🎙 Follow-ups {followUpsOn ? 'On' : 'Off'}</button>
+              <button
                 onClick={() => { if (window.confirm('Exit interview? Progress will be lost.')) reset(); }}
                 style={{
-                  marginLeft: 'auto', background: 'none',
+                  background: 'none',
                   border: '1px solid rgba(255,255,255,0.08)',
                   color: '#475569', borderRadius: '8px',
                   padding: '6px 14px', fontSize: '12px', fontWeight: '600',
@@ -426,7 +467,8 @@ export default function App() {
               evaluation={currentEvaluation}
               question={questions[currentIndex]}
               onNext={handleNext}
-              isLast={currentIndex >= questions.length - 1}
+              isLast={currentIndex >= questions.length - 1 && !pendingFollowUp}
+              hasFollowUp={!!pendingFollowUp}
             />
           </>
         )}
@@ -481,7 +523,7 @@ export default function App() {
           </>
         )}
 
-        {/* Profile */}
+        {/* Profile — hidden for MVP (gamification off). Restore with the import above.
         {screen === 'profile' && (
           <>
             <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -499,6 +541,7 @@ export default function App() {
             <Profile user={user} stats={stats} />
           </>
         )}
+        */}
       </div>
 
       {/* ── Mobile bottom nav ── */}

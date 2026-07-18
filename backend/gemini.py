@@ -120,7 +120,45 @@ Respond ONLY with a JSON array, no markdown:
     return out
 
 
+def _is_behavioral(category: str) -> bool:
+    """Behavioral / HR interviews get the STAR breakdown; technical ones don't."""
+    c = (category or "").lower()
+    return "behav" in c or "hr" in c
+
+
+def _star_component(c):
+    """Normalize one STAR component so the UI never breaks on a missing field."""
+    c = c or {}
+    try:
+        score = int(round(float(c.get("score", 0) or 0)))
+    except Exception:
+        score = 0
+    return {
+        "present": bool(c.get("present", score > 0)),
+        "score": max(0, min(2, score)),
+        "note": (c.get("note") or "").strip(),
+    }
+
+
 async def evaluate_answer(question, answer, role, category):
+    behavioral = _is_behavioral(category)
+
+    # For behavioral answers, also grade the STAR structure of the story.
+    star_instructions = ""
+    if behavioral:
+        star_instructions = """
+
+This is a BEHAVIORAL question. ALSO grade the answer against the STAR method.
+For each part decide if it is present and give a 0-2 score (0 = missing,
+1 = partial, 2 = clear). Add this extra key to the JSON:
+  "star": {
+    "situation": {"present": true/false, "score": 0-2, "note": "<short note>"},
+    "task":      {"present": true/false, "score": 0-2, "note": "<short note>"},
+    "action":    {"present": true/false, "score": 0-2, "note": "<short note>"},
+    "result":    {"present": true/false, "score": 0-2, "note": "<short note>"},
+    "tip": "<one concrete tip to make it a stronger STAR story>"
+  }"""
+
     prompt = f"""You are a senior engineer conducting a {category} interview for {role}.
 
 QUESTION: {question}
@@ -136,7 +174,7 @@ Be fair but rigorous. Respond ONLY with JSON (no markdown):
   "model_answer": "<comprehensive model answer in 3-5 sentences>",
   "keywords_mentioned": ["key term they mentioned"],
   "keywords_missed": ["important term they missed"]
-}}"""
+}}{star_instructions}"""
     data = call_ai_json(prompt)
     # Defensive defaults so the Feedback UI always renders.
     try:
@@ -144,7 +182,7 @@ Be fair but rigorous. Respond ONLY with JSON (no markdown):
     except Exception:
         score = 5
     score = max(1, min(10, score))
-    return {
+    result = {
         "score": score,
         "verdict": data.get("verdict", "Good"),
         "feedback": data.get("feedback", ""),
@@ -153,6 +191,45 @@ Be fair but rigorous. Respond ONLY with JSON (no markdown):
         "model_answer": data.get("model_answer", ""),
         "keywords_mentioned": data.get("keywords_mentioned", []) or [],
         "keywords_missed": data.get("keywords_missed", []) or [],
+    }
+    if behavioral:
+        star = data.get("star") or {}
+        result["star"] = {
+            "situation": _star_component(star.get("situation")),
+            "task": _star_component(star.get("task")),
+            "action": _star_component(star.get("action")),
+            "result": _star_component(star.get("result")),
+            "tip": (star.get("tip") or "").strip(),
+        }
+    return result
+
+
+async def generate_followup(question, answer, role, category):
+    """Decide, like a real interviewer, whether to probe deeper — and if so, ask ONE follow-up."""
+    prompt = f"""You are a senior engineer conducting a {category} interview for a {role} position.
+
+You just asked: "{question}"
+The candidate answered: "{answer}"
+
+Like a real interviewer, decide whether to ask ONE natural follow-up that probes deeper,
+challenges a vague claim, or asks for a concrete example. Only follow up if it genuinely
+adds value — if the answer was already thorough, don't.
+
+Respond ONLY with JSON (no markdown):
+{{
+  "should_followup": true or false,
+  "followup": "<a single, specific follow-up question that builds on what they said>",
+  "reason": "<one short phrase on why you're asking>"
+}}"""
+    try:
+        data = call_ai_json(prompt, max_tokens=400, temperature=0.6)
+    except Exception:
+        return {"should_followup": False, "followup": "", "reason": ""}
+    followup = (data.get("followup") or "").strip()
+    return {
+        "should_followup": bool(data.get("should_followup", False)) and bool(followup),
+        "followup": followup,
+        "reason": (data.get("reason") or "").strip(),
     }
 
 

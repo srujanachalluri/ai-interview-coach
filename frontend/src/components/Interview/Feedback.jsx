@@ -1,10 +1,73 @@
 import { useState } from 'react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 
-export default function Feedback({ evaluation, question, onNext, isLast }) {
+const STAR_META = [
+  { key: 'situation', letter: 'S', label: 'Situation' },
+  { key: 'task', letter: 'T', label: 'Task' },
+  { key: 'action', letter: 'A', label: 'Action' },
+  { key: 'result', letter: 'R', label: 'Result' },
+];
+
+function StarPanel({ star }) {
+  return (
+    <div style={{
+      background: 'rgba(168,85,247,0.06)', border: '1px solid rgba(168,85,247,0.25)',
+      borderRadius: '14px', padding: '18px', marginBottom: '20px',
+    }}>
+      <p style={{ color: '#d8b4fe', fontWeight: '700', fontSize: '13px', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+        ⭐ STAR Structure
+      </p>
+      <p style={{ color: '#64748b', fontSize: '11px', marginBottom: '14px' }}>
+        Strong behavioral answers cover all four — Situation, Task, Action, Result.
+      </p>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', marginBottom: '4px' }}>
+        {STAR_META.map(({ key, letter, label }) => {
+          const c = star[key] || {};
+          const good = c.present && c.score >= 2;
+          const partial = c.present && c.score === 1;
+          const color = good ? '#4ade80' : partial ? '#fbbf24' : '#f87171';
+          const bg = good ? 'rgba(74,222,128,0.1)' : partial ? 'rgba(251,191,36,0.1)' : 'rgba(248,113,113,0.08)';
+          return (
+            <div key={key} title={c.note || ''} style={{
+              background: bg, border: `1px solid ${color}40`, borderRadius: '10px',
+              padding: '10px 6px', textAlign: 'center',
+            }}>
+              <div style={{ color, fontSize: '20px', fontWeight: '800', lineHeight: 1 }}>{letter}</div>
+              <div style={{ color: '#94a3b8', fontSize: '10px', fontWeight: '600', marginTop: '4px' }}>{label}</div>
+              <div style={{ color, fontSize: '13px', marginTop: '4px' }}>{good ? '✓' : partial ? '~' : '✗'}</div>
+            </div>
+          );
+        })}
+      </div>
+      {/* Per-component notes */}
+      <div style={{ marginTop: '12px' }}>
+        {STAR_META.map(({ key, label }) => {
+          const note = (star[key] || {}).note;
+          if (!note) return null;
+          return (
+            <div key={key} style={{ display: 'flex', gap: '8px', marginBottom: '6px' }}>
+              <span style={{ color: '#c084fc', fontSize: '11px', fontWeight: '700', flexShrink: 0, width: '58px' }}>{label}</span>
+              <span style={{ color: '#94a3b8', fontSize: '12px', lineHeight: '1.5' }}>{note}</span>
+            </div>
+          );
+        })}
+      </div>
+      {star.tip && (
+        <div style={{
+          marginTop: '12px', padding: '10px 12px',
+          background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', borderRadius: '10px',
+        }}>
+          <p style={{ color: '#fbbf24', fontSize: '12px', lineHeight: '1.5' }}>💡 {star.tip}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Feedback({ evaluation, question, onNext, isLast, hasFollowUp }) {
   const isMobile = useIsMobile();
   const [showModel, setShowModel] = useState(false);
-  const { score, verdict, feedback, strengths, improvements, model_answer, keywords_mentioned, keywords_missed } = evaluation;
+  const { score, verdict, feedback, strengths, improvements, model_answer, keywords_mentioned, keywords_missed, star } = evaluation;
 
   const scoreColor = score >= 8 ? '#4ade80' : score >= 6 ? '#fbbf24' : score >= 4 ? '#f97316' : '#f87171';
   const verdictBg = score >= 8 ? 'rgba(74,222,128,0.1)' : score >= 6 ? 'rgba(251,191,36,0.1)' : 'rgba(248,113,113,0.1)';
@@ -40,6 +103,9 @@ export default function Feedback({ evaluation, question, onNext, isLast }) {
           <p style={{ color: '#94a3b8', fontSize: '14px', lineHeight: '1.6' }}>{feedback}</p>
         </div>
       </div>
+
+      {/* STAR breakdown (behavioral questions only) */}
+      {star && <StarPanel star={star} />}
 
       {/* Two column: strengths + improvements */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
@@ -140,7 +206,7 @@ export default function Feedback({ evaluation, question, onNext, isLast }) {
           onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
           onMouseOut={e => { e.currentTarget.style.transform = 'none'; }}
         >
-          {isLast ? '🏁 See Final Results' : '→ Next Question'}
+          {hasFollowUp ? '🎙 Answer Follow-up' : isLast ? '🏁 See Final Results' : '→ Next Question'}
         </button>
       </div>
     </div>

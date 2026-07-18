@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
 import uvicorn
-from gemini import generate_questions, evaluate_answer, generate_session_summary
+from gemini import generate_questions, evaluate_answer, generate_session_summary, generate_followup
 
 app = FastAPI(
     title="AI Interview Coach API",
@@ -46,6 +46,13 @@ class SummaryRequest(BaseModel):
     role: str
     category: str
     answers: list[dict]
+
+
+class FollowupRequest(BaseModel):
+    question: str
+    answer: str
+    role: str
+    category: str
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -112,6 +119,25 @@ async def evaluate(req: EvaluateRequest):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/followup")
+async def followup(req: FollowupRequest):
+    """Generate one adaptive follow-up question based on the candidate's answer."""
+    try:
+        if not req.answer.strip():
+            return {"success": True, "should_followup": False, "followup": ""}
+
+        result = await generate_followup(
+            question=req.question,
+            answer=req.answer,
+            role=req.role,
+            category=req.category,
+        )
+        return {"success": True, **result}
+    except Exception as e:
+        # A failed follow-up should never break the interview flow.
+        return {"success": False, "should_followup": False, "followup": "", "detail": str(e)}
 
 
 @app.post("/api/summary")

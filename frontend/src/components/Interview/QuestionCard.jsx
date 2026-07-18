@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { useSpeechToText } from '../../hooks/useSpeechToText';
+import { useTextToSpeech } from '../../hooks/useTextToSpeech';
 
 // Suggested answer time per difficulty (seconds) — drives the pacing meter.
 const TARGET_SECONDS = { Easy: 90, Medium: 150, Hard: 240 };
@@ -19,12 +20,20 @@ export default function QuestionCard({ question, index, total, onSubmit, loading
   const taRef = useRef(null);
 
   const target = TARGET_SECONDS[difficulty] || 150;
+  const isFollowUp = question?.type === 'follow-up';
+
+  // The interviewer reads the question aloud (text-to-speech).
+  const { supported: ttsSupported, speaking, muted, speak, cancel: stopSpeaking, toggleMute } =
+    useTextToSpeech();
 
   // Voice dictation appends recognized text to the answer.
-  const { supported: voiceSupported, listening, start, stop, error: voiceError } =
+  const { supported: voiceSupported, listening, start: startListening, stop, error: voiceError } =
     useSpeechToText((text) => {
       setAnswer((prev) => (prev ? prev.trimEnd() + ' ' : '') + text.trim());
     });
+
+  // Don't let the mic record the interviewer's own voice — cut TTS before listening.
+  const start = () => { stopSpeaking(); startListening(); };
 
   // Reset per-question state and restart the timer when the question changes.
   useEffect(() => {
@@ -34,6 +43,13 @@ export default function QuestionCard({ question, index, total, onSubmit, loading
     if (listening) stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
+
+  // Speak each new question aloud (respects the persisted mute preference).
+  useEffect(() => {
+    if (question?.question) speak(question.question);
+    return () => stopSpeaking();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, question?.question]);
 
   useEffect(() => {
     const t = setInterval(() => setElapsed((e) => e + 1), 1000);
@@ -87,16 +103,55 @@ export default function QuestionCard({ question, index, total, onSubmit, loading
 
       {/* Question */}
       <div style={{
-        background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)',
+        background: isFollowUp ? 'rgba(168,85,247,0.08)' : 'rgba(99,102,241,0.08)',
+        border: `1px solid ${isFollowUp ? 'rgba(168,85,247,0.35)' : 'rgba(99,102,241,0.2)'}`,
         borderRadius: '16px', padding: pad, marginBottom: '20px',
       }}>
+        {/* Header: follow-up tag (left) + interviewer voice controls (right) */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', gap: '8px' }}>
+          {isFollowUp ? (
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.35)',
+              color: '#d8b4fe', fontSize: '11px', fontWeight: '800',
+              padding: '4px 12px', borderRadius: '20px', textTransform: 'uppercase', letterSpacing: '0.06em',
+            }}>🎙 Follow-up from your interviewer</span>
+          ) : <span />}
+          {ttsSupported && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {!muted && (
+                <button
+                  onClick={() => speak(question.question)}
+                  title="Replay question"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '5px',
+                    background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)',
+                    color: '#a5b4fc', borderRadius: '20px', padding: '5px 12px', fontSize: '12px', fontWeight: '700',
+                    animation: speaking ? 'recPulse 1.5s infinite' : 'none',
+                  }}
+                >🔁 Replay</button>
+              )}
+              <button
+                onClick={toggleMute}
+                title={muted ? 'Unmute interviewer voice' : 'Mute interviewer voice'}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '5px',
+                  background: muted ? 'rgba(255,255,255,0.04)' : 'rgba(99,102,241,0.12)',
+                  border: `1px solid ${muted ? 'rgba(255,255,255,0.1)' : 'rgba(99,102,241,0.3)'}`,
+                  color: muted ? '#64748b' : '#a5b4fc',
+                  borderRadius: '20px', padding: '5px 12px', fontSize: '12px', fontWeight: '700',
+                }}
+              >{muted ? '🔇 Voice off' : '🔊 Voice on'}</button>
+            </div>
+          )}
+        </div>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: isMobile ? '12px' : '16px' }}>
           <div style={{
             width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            background: isFollowUp ? 'linear-gradient(135deg, #a855f7, #8b5cf6)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '15px', fontWeight: '800', color: 'white',
-          }}>Q{index + 1}</div>
+            fontSize: isFollowUp ? '18px' : '15px', fontWeight: '800', color: 'white',
+          }}>{isFollowUp ? '↳' : `Q${index + 1}`}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ color: '#f1f5f9', fontSize: isMobile ? '16px' : '17px', fontWeight: '600', lineHeight: '1.6', letterSpacing: '-0.2px' }}>
               {question.question}

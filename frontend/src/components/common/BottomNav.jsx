@@ -3,7 +3,7 @@ const TABS = [
   { id: 'dashboard', label: 'Home', icon: '🏠' },
   { id: 'select', label: 'Practice', icon: '🎯' },
   { id: 'history', label: 'History', icon: '📚' },
-  { id: 'profile', label: 'Profile', icon: '🏆' },
+  // { id: 'profile', label: 'Profile', icon: '🏆' },   // MVP: profile tab hidden
 ];
 
 export default function BottomNav({ screen, onNavigate }) {

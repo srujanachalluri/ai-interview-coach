@@ -33,6 +33,12 @@ export const api = {
       body: JSON.stringify({ question, answer, role, category }),
     }),
 
+  followup: (question, answer, role, category) =>
+    call('/api/followup', {
+      method: 'POST',
+      body: JSON.stringify({ question, answer, role, category }),
+    }),
+
   getSummary: (role, category, answers) =>
     call('/api/summary', {
       method: 'POST',
